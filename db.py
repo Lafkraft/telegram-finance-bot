@@ -3,12 +3,8 @@ from typing import Dict, List, Tuple
 
 import sqlite3
 
-
-conn = sqlite3.connect(os.path.join("db", "finance.db"))
-cursor = conn.cursor()
-
-
 def insert(table: str, column_values: Dict):
+    cursor = get_cursor()
     columns = ', '.join( column_values.keys() )
     values = [tuple(column_values.values())]
     placeholders = ", ".join( "?" * len(column_values.keys()) )
@@ -17,10 +13,11 @@ def insert(table: str, column_values: Dict):
         f"({columns}) "
         f"VALUES ({placeholders})",
         values)
-    conn.commit()
+    cursor.connection.commit()
 
 
 def fetchall(table: str, columns: List[str]) -> List[Tuple]:
+    cursor = get_cursor()
     columns_joined = ", ".join(columns)
     cursor.execute(f"SELECT {columns_joined} FROM {table}")
     rows = cursor.fetchall()
@@ -34,25 +31,29 @@ def fetchall(table: str, columns: List[str]) -> List[Tuple]:
 
 
 def delete(table: str, row_id: int) -> None:
+    cursor = get_cursor()
     row_id = int(row_id)
     cursor.execute(f"delete from {table} where id={row_id}")
-    conn.commit()
+    cursor.connection.commit()
 
 
 def get_cursor():
-    return cursor
+    conn = sqlite3.connect(os.path.join("db", "finance.db"))
+    return conn.cursor()
 
 
 def _init_db():
     """Инициализирует БД"""
-    with open("createdb.sql", "r") as f:
+    cursor = get_cursor()
+    with open("createdb.sql", "r", encoding="utf-8") as f:
         sql = f.read()
     cursor.executescript(sql)
-    conn.commit()
+    cursor.connection.commit()
 
 
 def check_db_exists():
     """Проверяет, инициализирована ли БД, если нет — инициализирует"""
+    cursor = get_cursor()
     cursor.execute("SELECT name FROM sqlite_master "
                    "WHERE type='table' AND name='expense'")
     table_exists = cursor.fetchall()

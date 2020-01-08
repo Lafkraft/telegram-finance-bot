@@ -14,6 +14,7 @@ def insert(table: str, column_values: Dict):
         f"VALUES ({placeholders})",
         values)
     cursor.connection.commit()
+    cursor.connection.close()
 
 
 def fetchall(table: str, columns: List[str]) -> List[Tuple]:
@@ -27,6 +28,7 @@ def fetchall(table: str, columns: List[str]) -> List[Tuple]:
         for index, column in enumerate(columns):
             dict_row[column] = row[index]
         result.append(dict_row)
+    cursor.connection.close()
     return result
 
 
@@ -35,7 +37,7 @@ def delete(table: str, row_id: int) -> None:
     row_id = int(row_id)
     cursor.execute(f"delete from {table} where id={row_id}")
     cursor.connection.commit()
-
+    cursor.connection.close()
 
 def get_cursor():
     conn = sqlite3.connect(os.path.join("db", "finance.db"))
@@ -49,6 +51,7 @@ def _init_db():
         sql = f.read()
     cursor.executescript(sql)
     cursor.connection.commit()
+    cursor.connection.close()
 
 
 def check_db_exists():
@@ -57,6 +60,7 @@ def check_db_exists():
     cursor.execute("SELECT name FROM sqlite_master "
                    "WHERE type='table' AND name='expense'")
     table_exists = cursor.fetchall()
+    cursor.connection.close()
     if table_exists:
         return
     _init_db()

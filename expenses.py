@@ -50,7 +50,7 @@ def get_today_statistics() -> str:
     cursor.execute("select sum(amount) "
                    "from expense where created=current_date "
                    "and category_codename in (select codename "
-                   "from category where is_base_expense=true)")
+                   "from category where is_base_expense=1)")
     result = cursor.fetchone()
     base_today_expenses = result[0] if result[0] else 0
     return (f"Расходы сегодня:\n"
@@ -73,7 +73,7 @@ def get_month_statistics() -> str:
     cursor.execute(f"select sum(amount) "
                    f"from expense where created >= '{first_day_of_month}' "
                    f"and category_codename in (select codename "
-                   f"from category where is_base_expense=true)")
+                   f"from category where is_base_expense=1)")
     result = cursor.fetchone()
     base_today_expenses = result[0] if result[0] else 0
     return (f"Расходы в текущем месяце:\n"

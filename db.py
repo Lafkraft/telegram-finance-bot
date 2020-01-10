@@ -39,6 +39,7 @@ def delete(table: str, row_id: int) -> None:
     cursor.connection.commit()
     cursor.connection.close()
 
+
 def get_cursor():
     conn = sqlite3.connect(os.path.join("db", "finance.db"))
     return conn.cursor()
@@ -64,5 +65,6 @@ def check_db_exists():
     if table_exists:
         return
     _init_db()
+
 
 check_db_exists()

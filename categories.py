@@ -38,7 +38,7 @@ class Categories:
             categories_result.append(Category(
                 codename=category['codename'],
                 name=category['name'],
-                is_base_expense=category['is_base_expense'],
+                is_base_expense=category['is_base_expense'] == 1,
                 aliases=aliases
             ))
         return categories_result

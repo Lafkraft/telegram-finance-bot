@@ -15,6 +15,12 @@ Telegram бот для учёта личных расходов и ведени�
 вместо `local_project_path`. SQLite база данных будет лежать в папке проекта `db/finance.db`.
 
 ```
+сборка и запуск:
 docker build -t tgfinance ./
 docker run -d --name tg -v /local_project_path/db:/home/db tgfinance
+
+заливка на докерхаб:
+docker login --username username
+docker tag tgfinance username/tgfinance
+docker push username/tgfinance
 ```
